@@ -4,18 +4,20 @@ import { useChat } from "ai/react";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
-    onToolCall({ toolCall }) {
-      console.log(toolCall, "hello");
-      return "Hello";
-    },
+    experimental_maxAutomaticRoundtrips: 1,
   });
   return (
     <div>
       {messages.map((m) => (
         <div key={m.id}>
-          {m.role}:{"\n"}
-          {m.content}
-          <pre>{JSON.stringify(m, null, 2)}</pre>
+          {m.toolInvocations ? (
+            <div>[tool call: {m.toolInvocations[0].toolName}]</div>
+          ) : (
+            <div>
+              {m.role}:{"\n"}
+              {m.content}
+            </div>
+          )}
         </div>
       ))}
       <form onSubmit={handleSubmit}>
